@@ -1,9 +1,9 @@
 package cmd
 
 import (
+	"github.com/rijwanansari/vivaLearning/config"
 	"github.com/spf13/cobra"
 	"github.com/vivasoft-ltd/golang-course-utils/logger"
-	"gtihub.com/rijwanansari/vivaLearning/config"
 )
 
 var rootCmd = &cobra.Command{

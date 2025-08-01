@@ -1,8 +1,8 @@
 package repository
 
 import (
+	"github.com/rijwanansari/vivaLearning/domain"
 	"gorm.io/gorm"
-	"gtihub.com/rijwanansari/vivaLearning/domain"
 )
 
 type UserRepository interface {

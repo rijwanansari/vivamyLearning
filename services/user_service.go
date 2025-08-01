@@ -4,9 +4,9 @@ import (
 	"errors"
 	"time"
 
-	"gtihub.com/rijwanansari/vivaLearning/domain"
-	repository "gtihub.com/rijwanansari/vivaLearning/repositories"
-	util "gtihub.com/rijwanansari/vivaLearning/utils"
+	"github.com/rijwanansari/vivaLearning/domain"
+	repository "github.com/rijwanansari/vivaLearning/repositories"
+	util "github.com/rijwanansari/vivaLearning/utils"
 )
 
 type UserService interface {

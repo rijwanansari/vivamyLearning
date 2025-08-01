@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"gtihub.com/rijwanansari/vivaLearning/dto"
-	"gtihub.com/rijwanansari/vivaLearning/services"
+	"github.com/rijwanansari/vivaLearning/dto"
+	"github.com/rijwanansari/vivaLearning/services"
 )
 
 type AuthController struct {

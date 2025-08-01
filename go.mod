@@ -1,4 +1,4 @@
-module gtihub.com/rijwanansari/vivaLearning
+module github.com/rijwanansari/vivaLearning
 
 go 1.24.2
 

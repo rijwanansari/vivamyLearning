@@ -5,11 +5,11 @@ import (
 	"log"
 	"time"
 
+	"github.com/rijwanansari/vivaLearning/config"
+	"github.com/rijwanansari/vivaLearning/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gtihub.com/rijwanansari/vivaLearning/config"
-	"gtihub.com/rijwanansari/vivaLearning/domain"
 )
 
 var db *gorm.DB

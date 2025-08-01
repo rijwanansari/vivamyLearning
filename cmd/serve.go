@@ -4,14 +4,14 @@ import (
 	"fmt"
 
 	"github.com/labstack/echo/v4"
+	"github.com/rijwanansari/vivaLearning/config"
+	"github.com/rijwanansari/vivaLearning/conn"
+	"github.com/rijwanansari/vivaLearning/controllers"
+	repository "github.com/rijwanansari/vivaLearning/repositories"
+	"github.com/rijwanansari/vivaLearning/routes"
+	"github.com/rijwanansari/vivaLearning/server"
+	"github.com/rijwanansari/vivaLearning/services"
 	"github.com/spf13/cobra"
-	"gtihub.com/rijwanansari/vivaLearning/config"
-	"gtihub.com/rijwanansari/vivaLearning/conn"
-	"gtihub.com/rijwanansari/vivaLearning/controllers"
-	repository "gtihub.com/rijwanansari/vivaLearning/repositories"
-	"gtihub.com/rijwanansari/vivaLearning/routes"
-	"gtihub.com/rijwanansari/vivaLearning/server"
-	"gtihub.com/rijwanansari/vivaLearning/services"
 )
 
 var serveCmd = &cobra.Command{

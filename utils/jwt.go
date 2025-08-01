@@ -1,22 +1,30 @@
-package util
+package utils
 
-var SecretKey = []byte("your-secret-key") // move to env/config
+import (
+	"time"
 
-// func JWTMiddleware() echo.MiddlewareFunc {
-// 	return middleware.JWTWithConfig(middleware.JWTConfig{
-// 		SigningKey:    SecretKey,
-// 		SigningMethod: "HS256",
-// 	})
-// }
+	"github.com/golang-jwt/jwt/v4"
+)
 
-// func IsAdmin(next echo.HandlerFunc) echo.HandlerFunc {
-// 	return func(c echo.Context) error {
-// 		user := c.Get("user").(*jwt.Token)
-// 		claims := user.Claims.(jwt.MapClaims)
+var jwtSecret = []byte("your-secret")
 
-// 		if claims["role"] != "admin" {
-// 			return echo.ErrUnauthorized
-// 		}
-// 		return next(c)
-// 	}
-// }
+func GenerateJWT(userID uint) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id": userID,
+		"exp":     time.Now().Add(24 * time.Hour).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(jwtSecret)
+}
+
+func ParseJWT(tokenString string) (uint, error) {
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+		return jwtSecret, nil
+	})
+	if err != nil || !token.Valid {
+		return 0, err
+	}
+	claims := token.Claims.(jwt.MapClaims)
+	userID := uint(claims["user_id"].(float64))
+	return userID, nil
+}

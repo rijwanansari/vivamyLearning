@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"gtihub.com/rijwanansari/vivaLearning/controllers"
+	"github.com/rijwanansari/vivaLearning/controllers"
 )
 
 type Routes struct {
