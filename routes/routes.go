@@ -30,4 +30,5 @@ func (r *Routes) Init() {
 	g := e.Group("/api/v1")
 	// auth routes
 	g.POST("/register", r.auth.RegisterUser)
+	g.POST("/login", r.auth.LoginUser)
 }

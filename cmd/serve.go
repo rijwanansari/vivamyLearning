@@ -45,9 +45,11 @@ func Serve(cmd *cobra.Command, args []string) {
 
 	// services
 	userService := services.NewUserService(userRepo)
+	// auth service
+	authService := services.NewAuthService(userRepo)
 
 	//get controller
-	authController := controllers.NewAuthController(userService)
+	authController := controllers.NewAuthController(userService, authService)
 
 	// Initialize the server
 	echoServer := echo.New()

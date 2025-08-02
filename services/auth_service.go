@@ -10,7 +10,7 @@ import (
 )
 
 type AuthService interface {
-	Register(email, password string) error
+	Register(email, password string) (*domain.User, error)
 	Login(email, password string) (string, error)
 }
 
@@ -39,6 +39,7 @@ func (s *AuthServiceImp) Register(email, password string) (*domain.User, error) 
 
 	return user, nil
 }
+
 func (s *AuthServiceImp) Login(email, password string) (string, error) {
 	user, err := s.UserRepo.GetByEmail(email)
 	if err != nil {
