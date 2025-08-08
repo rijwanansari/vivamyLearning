@@ -40,23 +40,29 @@ func Serve(cmd *cobra.Command, args []string) {
 	//database client
 	dbClient := conn.Db()
 
-	// repository
+	// repositories
 	userRepo := repository.NewUserRepository(dbClient)
+	courseRepo := repository.NewCourseRepository(dbClient)
+	lessonRepo := repository.NewLessonRepository(dbClient)
+	userCourseRepo := repository.NewUserCourseRepository(dbClient)
 
 	// services
 	userService := services.NewUserService(userRepo)
-	// auth service
 	authService := services.NewAuthService(userRepo)
+	courseService := services.NewCourseService(courseRepo, userCourseRepo, lessonRepo)
+	lessonService := services.NewLessonService(lessonRepo, courseRepo, userCourseRepo)
 
-	//get controller
+	// controllers
 	authController := controllers.NewAuthController(userService, authService)
+	courseController := controllers.NewCourseController(courseService, lessonService)
+	lessonController := controllers.NewLessonController(lessonService)
 
 	// Initialize the server
 	echoServer := echo.New()
 	server := server.New(echoServer)
 
 	//register routes
-	routes := routes.New(echoServer, authController)
+	routes := routes.New(echoServer, authController, courseController, lessonController)
 	routes.Init()
 
 	// Start the server

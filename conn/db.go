@@ -62,6 +62,7 @@ func InitDB() {
 		&domain.Course{},
 		&domain.Lesson{},
 		&domain.UserCourse{},
+		&domain.UserLesson{},
 	)
 	if err != nil {
 		log.Fatalf("Auto migration failed: %v", err)
