@@ -10,8 +10,8 @@ import (
 )
 
 type AuthService interface {
-	Register(email, password string) (*domain.User, error)
-	Login(email, password string) (string, error)
+	Register(name, email, password string) (*domain.User, error)
+	Login(email, password string) (*domain.User, string, error)
 }
 
 type AuthServiceImp struct {
@@ -22,13 +22,14 @@ func NewAuthService(userRepo repository.UserRepository) *AuthServiceImp {
 	return &AuthServiceImp{UserRepo: userRepo}
 }
 
-func (s *AuthServiceImp) Register(email, password string) (*domain.User, error) {
+func (s *AuthServiceImp) Register(name, email, password string) (*domain.User, error) {
 	if existing, _ := s.UserRepo.GetByEmail(email); existing != nil {
 		return nil, errors.New("email already registered")
 	}
 
 	hashed, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	user := &domain.User{
+		Name:     name,
 		Email:    email,
 		Password: string(hashed),
 		Role:     "user",
@@ -40,17 +41,23 @@ func (s *AuthServiceImp) Register(email, password string) (*domain.User, error) 
 	return user, nil
 }
 
-func (s *AuthServiceImp) Login(email, password string) (string, error) {
+func (s *AuthServiceImp) Login(email, password string) (*domain.User, string, error) {
 	user, err := s.UserRepo.GetByEmail(email)
 	if err != nil {
-		return "", err
+		return nil, "", err
 	}
 
 	if user == nil {
-		return "", errors.New("user not found")
+		return nil, "", errors.New("user not found")
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return "", errors.New("invalid password")
+		return nil, "", errors.New("invalid password")
 	}
-	return utils.GenerateJWT(user.ID)
+
+	token, err := utils.GenerateJWT(user.ID)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return user, token, nil
 }

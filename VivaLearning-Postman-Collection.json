@@ -1,0 +1,829 @@
+{
+	"info": {
+		"_postman_id": "viva-learning-api-collection",
+		"name": "VivaLearning API Collection",
+		"description": "Complete API collection for VivaLearning platform including authentication, courses, lessons, and progress tracking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "api_url",
+			"value": "{{base_url}}/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "course_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "lesson_id",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Health Check",
+			"item": [
+				{
+					"name": "Ping Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ping",
+							"host": ["{{base_url}}"],
+							"path": ["ping"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.access_token) {",
+									"        pm.collectionVariables.set('access_token', response.data.access_token);",
+									"        console.log('Access token saved:', response.data.access_token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/register",
+							"host": ["{{api_url}}"],
+							"path": ["auth", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.access_token) {",
+									"        pm.collectionVariables.set('access_token', response.data.access_token);",
+									"        console.log('Access token saved:', response.data.access_token);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/auth/login",
+							"host": ["{{api_url}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Public Course APIs",
+			"item": [
+				{
+					"name": "Get Published Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses?page=1&limit=10",
+							"host": ["{{api_url}}"],
+							"path": ["courses"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/search?category=Programming&level=beginner&page=1&limit=5",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "search"],
+							"query": [
+								{
+									"key": "category",
+									"value": "Programming"
+								},
+								{
+									"key": "level",
+									"value": "beginner"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Details (Public)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Free Course Lessons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/lessons/free",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "lessons", "free"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Course Management (Protected)",
+			"item": [
+				{
+					"name": "Create Course",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('course_id', response.data.id);",
+									"        console.log('Course ID saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Introduction to Go Programming\",\n    \"description\": \"Learn Go programming from scratch with hands-on examples and real-world projects\",\n    \"short_description\": \"Go programming basics for beginners\",\n    \"thumbnail\": \"https://example.com/go-course.jpg\",\n    \"level\": \"beginner\",\n    \"category\": \"Programming\",\n    \"tags\": \"go,programming,backend,api\",\n    \"price\": 99.99,\n    \"is_published\": true\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/courses",
+							"host": ["{{api_url}}"],
+							"path": ["courses"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Updated: Learn Go programming from scratch with hands-on examples, real-world projects, and best practices\",\n    \"price\": 79.99\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Created Courses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/my/courses",
+							"host": ["{{api_url}}"],
+							"path": ["my", "courses"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Course Enrollment",
+			"item": [
+				{
+					"name": "Enroll in Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/enroll",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "enroll"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Enrolled Courses",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/my/enrolled-courses",
+							"host": ["{{api_url}}"],
+							"path": ["my", "enrolled-courses"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Progress",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/progress",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "progress"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unenroll from Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/enroll",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "enroll"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Lesson Management",
+			"item": [
+				{
+					"name": "Create Lesson",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('lesson_id', response.data.id);",
+									"        console.log('Lesson ID saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Introduction to Go Syntax\",\n    \"description\": \"Learn the basic syntax of Go programming language\",\n    \"video_url\": \"https://youtube.com/watch?v=example1\",\n    \"video_id\": \"example1\",\n    \"script\": \"Welcome to our Go programming course. In this lesson, we'll cover the basic syntax of Go...\",\n    \"duration\": 600,\n    \"sequence\": 1,\n    \"is_published\": true,\n    \"is_free\": true\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/lessons",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "lessons"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Second Lesson",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Variables and Data Types\",\n    \"description\": \"Understanding Go variables and data types\",\n    \"video_url\": \"https://youtube.com/watch?v=example2\",\n    \"video_id\": \"example2\",\n    \"script\": \"In this lesson, we'll explore Go variables and data types in detail...\",\n    \"duration\": 720,\n    \"sequence\": 2,\n    \"is_published\": true,\n    \"is_free\": false\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/lessons",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "lessons"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Lessons",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/lessons",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "lessons"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lesson Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/lessons/{{lesson_id}}",
+							"host": ["{{api_url}}"],
+							"path": ["lessons", "{{lesson_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Lesson",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Updated: Learn the basic syntax of Go programming language with practical examples\",\n    \"duration\": 650\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/lessons/{{lesson_id}}",
+							"host": ["{{api_url}}"],
+							"path": ["lessons", "{{lesson_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Lesson",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/lessons/{{lesson_id}}",
+							"host": ["{{api_url}}"],
+							"path": ["lessons", "{{lesson_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reorder Lessons",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"lesson_id\": 1,\n        \"sequence\": 2\n    },\n    {\n        \"lesson_id\": 2,\n        \"sequence\": 1\n    }\n]"
+						},
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/lessons/reorder",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "lessons", "reorder"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. Progress Tracking",
+			"item": [
+				{
+					"name": "Update Lesson Progress",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lesson_id\": {{lesson_id}},\n    \"watch_time\": 300,\n    \"is_completed\": false\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/lessons/progress",
+							"host": ["{{api_url}}"],
+							"path": ["lessons", "progress"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mark Lesson Completed",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"watch_time\": 580\n}"
+						},
+						"url": {
+							"raw": "{{api_url}}/lessons/{{lesson_id}}/complete",
+							"host": ["{{api_url}}"],
+							"path": ["lessons", "{{lesson_id}}", "complete"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Lesson Progress",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/lessons/progress",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "lessons", "progress"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Analytics",
+			"item": [
+				{
+					"name": "Get Course Analytics",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/courses/{{course_id}}/analytics",
+							"host": ["{{api_url}}"],
+							"path": ["courses", "{{course_id}}", "analytics"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "9. Admin APIs",
+			"item": [
+				{
+					"name": "Get All Courses (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_url}}/admin/courses",
+							"host": ["{{api_url}}"],
+							"path": ["admin", "courses"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

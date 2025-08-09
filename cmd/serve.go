@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/rijwanansari/vivaLearning/config"
 	"github.com/rijwanansari/vivaLearning/conn"
 	"github.com/rijwanansari/vivaLearning/controllers"
@@ -59,6 +61,16 @@ func Serve(cmd *cobra.Command, args []string) {
 
 	// Initialize the server
 	echoServer := echo.New()
+
+	// Enable CORS for frontend (localhost:3000)
+	echoServer.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{echo.GET, echo.POST, echo.PUT, echo.DELETE, echo.OPTIONS},
+		AllowHeaders:     []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
+		AllowCredentials: true,
+		MaxAge:           int((12 * time.Hour).Seconds()),
+	}))
+
 	server := server.New(echoServer)
 
 	//register routes
